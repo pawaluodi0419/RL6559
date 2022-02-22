@@ -30,6 +30,7 @@
 #define smbus_cmd_type_readefuse	         0x39
 #define smbus_cmd_type_geticstatus	         0x3A
 #define smbus_cmd_type_vdcmdenable	         0x01
+#define smbus_cmd_type_getflashid	         0x01
 
 #define smbus_cmd_type_reset_to_flash	     0x05
 #define smbus_cmd_type_reset_to_rom		     0x02
