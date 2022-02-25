@@ -137,7 +137,7 @@ u8 _by_Pattern0_Setup_dut2()
 			xil_printf("dut2.read_icstatus_data[3] =0x%x\r\n", read_icstatus_data[3]);
 			xil_printf("dut2.read_icstatus_data[4] =0x%x\r\n", read_icstatus_data[4]);
 
-			if((read_icstatus_data[3] == 0x01) && (read_icstatus_data[3] == 0x02))
+			if((read_icstatus_data[3] == 0x01) && (read_icstatus_data[4] == 0x02))
 			{
 			    xil_printf("dut2 check FW version pass!\r\n\r\n");
 
