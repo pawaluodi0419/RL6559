@@ -35,7 +35,7 @@ u8 g_ledD7Tg=0;
 
 int main()
 {
-	xil_printf("FT2 start!\r\nFPGA Version:RTS5452U_FT_Merge_Release_2022022201\r\n");
+	xil_printf("FT2 start!\r\nFPGA Version:RTS5443H_FT_Merge_Release_2022030301\r\n");
 
 	XGpio_WriteBit(XPAR_AXI_GPIO_1_BASEADDR,0,1, 0);	//reset usb host
 	msdelay(100);

@@ -475,7 +475,7 @@ u8 smbus0_irq_handle(u8 smbus_control_buf[])
 	}
 
 	//smbus_read//
-	if(((smbus0_cmd_code & 0x30) == 0x30) | (smbus0_cmd_code == 0x24) | ((smbus0_cmd_code == 0x01) && (smbus0_cmd_code_add == 0x04)))
+	if(((smbus0_cmd_code & 0x30) == 0x30) | (smbus0_cmd_code == 0x24) | (smbus0_cmd_code == 0x26) | ((smbus0_cmd_code == 0x01) && (smbus0_cmd_code_add == 0x04)))
 	{
 		switch(smbus0_process_state)
 		{
@@ -501,6 +501,14 @@ u8 smbus0_irq_handle(u8 smbus_control_buf[])
 		    	smbus_writecmd_buf[1] = 0x03;
 		    }
 		    if(smbus_control_buf[1] == smbus_cmd_type_getflashid)
+		    {
+		    	smbus_writecmd_buf[1] = 0x03;
+		    }
+		    if(smbus_control_buf[1] == smbus_cmd_type_readflash_64K)
+		    {
+		    	smbus_writecmd_buf[1] = 0x03;
+		    }
+		    if(smbus_control_buf[1] == smbus_cmd_type_readflash_128K)
 		    {
 		    	smbus_writecmd_buf[1] = 0x03;
 		    }
@@ -726,7 +734,12 @@ u8 smbus0_irq_handle(u8 smbus_control_buf[])
 					smbus_readcmd_count = smbus_control_buf[4];
 					break;
 				}
-				case smbus_cmd_type_readflash:
+				case smbus_cmd_type_readflash_64K:
+				{
+					smbus_readcmd_count = smbus_control_buf[4];
+					break;
+				}
+				case smbus_cmd_type_readflash_128K:
 				{
 					smbus_readcmd_count = smbus_control_buf[4];
 					break;

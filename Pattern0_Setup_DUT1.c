@@ -3,8 +3,9 @@
 u8 _by_Pattern0_Setup_dut1()
 {
 	u8 i;
-	u8 read_icstatus_data[20];
 	u8 Buff_dut1_XGPIO_0[8];
+	u8 read_icstatus_data[20];
+	u8 read_flashdata[40];
 
 	switch(dut1.g_pattern_step)
 	{
@@ -134,8 +135,8 @@ u8 _by_Pattern0_Setup_dut1()
 			{
 				read_icstatus_data[i] = dut1.g_pattern_smbus_control_buf[i+10];
 			}
-			xil_printf("dut1.read_icstatus_data[3] =0x%x\r\n", read_icstatus_data[3]);
-			xil_printf("dut1.read_icstatus_data[4] =0x%x\r\n", read_icstatus_data[4]);
+			xil_printf("dut1.read_icstatus_data[3] =0x%02x\r\n", read_icstatus_data[3]);
+			xil_printf("dut1.read_icstatus_data[4] =0x%02x\r\n", read_icstatus_data[4]);
 
 			if((read_icstatus_data[3] == 0x01) && (read_icstatus_data[4] == 0x02))
 			{
@@ -160,8 +161,55 @@ u8 _by_Pattern0_Setup_dut1()
 		break;
 	}
 
-	//FT mode£ºVMONÂúÆ«(XGPIO13 -> H, XGPIO14 -> L), GPIO10Îªlow(XGPIO23 -> L)
+	//check crc32 data
 	case 0x0004:
+	{
+		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readflash_128K;
+		dut1.g_pattern_smbus_control_buf[2] = 0xe6;
+		dut1.g_pattern_smbus_control_buf[3] = 0xff;
+		dut1.g_pattern_smbus_control_buf[4] = 0x04;
+
+		smbus1_irq_handle(dut1.g_pattern_smbus_control_buf);
+		if(dut1.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
+		{
+			break;
+		}
+		else
+		{
+			for(i=0;i<4;i++)
+			{
+				read_flashdata[i] = dut1.g_pattern_smbus_control_buf[i+10];
+			}
+			xil_printf("dut1.crc32_byte0 =0x%02x\r\n", read_flashdata[0]);
+			xil_printf("dut1.crc32_byte1 =0x%02x\r\n", read_flashdata[1]);
+			xil_printf("dut1.crc32_byte2 =0x%02x\r\n", read_flashdata[2]);
+			xil_printf("dut1.crc32_byte3 =0x%02x\r\n", read_flashdata[3]);
+
+			if((read_flashdata[0] == 0x3f) && (read_flashdata[1] == 0x93) && (read_flashdata[2] == 0xd0) && (read_flashdata[3] == 0xf2))
+			{
+			    xil_printf("dut1 check crc32 data pass!\r\n\r\n");
+
+				for(i=1; i<60; i++)
+				{
+					dut1.g_pattern_smbus_control_buf[i] = CLEAR_;
+				}
+
+				dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
+				dut1.g_pattern_step++;
+			}
+			else
+			{
+				xil_printf("dut1 check crc32 data fail!\r\n\r\n");
+
+				dut1.g_result_fail = 0x01;
+				dut1.g_result_fail_tmrcount = 0xffff;
+			}
+		}
+		break;
+	}
+
+	//FT mode£ºVMONÂúÆ«(XGPIO13 -> H, XGPIO14 -> L), GPIO10Îªlow(XGPIO23 -> L)
+	case 0x0005:
 	{
 		if(dut1.g_dut_pattern_status_buf[7] == 0x00)
 		{
@@ -197,7 +245,7 @@ u8 _by_Pattern0_Setup_dut1()
 	}
 
 	//reset to flash
-	case 0x0005:
+	case 0x0006:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_reset_to_flash;
 		dut1.g_pattern_smbus_control_buf[2] = 0xda;
@@ -223,7 +271,7 @@ u8 _by_Pattern0_Setup_dut1()
 		break;
 	}
 
-	case 0x0006:
+	case 0x0007:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_vdcmdenable;
 		dut1.g_pattern_smbus_control_buf[2] = 0xda;
@@ -249,7 +297,7 @@ u8 _by_Pattern0_Setup_dut1()
 	}
 
 	//check FT mode
-	case 0x0007:
+	case 0x0008:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readmem;
 		dut1.g_pattern_smbus_control_buf[2] = 0x07;
@@ -268,7 +316,7 @@ u8 _by_Pattern0_Setup_dut1()
 			if(dut1.g_pattern_smbus_control_buf[10] == 0x20)
 			{
 				xil_printf("dut1 check FT mode pass!\r\n\r\n");
-				dut1.g_pattern_step = 0x08;
+				dut1.g_pattern_step = 0x0a;
 			}
 			else
 			{
@@ -277,7 +325,7 @@ u8 _by_Pattern0_Setup_dut1()
 				i2c_mcp23008_output(AD7994_DEV1_ADDR, MCP23008_ADDR, 0x80);
 				msdelay(200);
 				xil_printf("dut1 check FT mode again!\r\n\r\n");
-				dut1.g_pattern_step = 0x07;
+				dut1.g_pattern_step = 0x09;
 			}
 
 			for(i=1; i<60; i++)
@@ -290,7 +338,7 @@ u8 _by_Pattern0_Setup_dut1()
 	}
 
 	//check FT mode retry
-	case 0x0008:
+	case 0x0009:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readmem;
 		dut1.g_pattern_smbus_control_buf[2] = 0x07;
@@ -329,7 +377,7 @@ u8 _by_Pattern0_Setup_dut1()
 	}
 
 	//disconnect aux mux switch
-	case 0x0009:
+	case 0x000a:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_writemem;
 		dut1.g_pattern_smbus_control_buf[2] = 0x15;
@@ -351,57 +399,58 @@ u8 _by_Pattern0_Setup_dut1()
 
 			dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 			dut1.g_pattern_step++;
+			dut1.g_pattern_step++;
 		}
 		break;
 	}
 
-	//check IC information
-	case 0x000a:
-	{
-		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_geticstatus;
-		dut1.g_pattern_smbus_control_buf[2] = 0x00;
-		dut1.g_pattern_smbus_control_buf[3] = 0x00;
-		dut1.g_pattern_smbus_control_buf[4] = 0x14;
-
-		smbus1_irq_handle(dut1.g_pattern_smbus_control_buf);
-		if(dut1.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			for(i=0;i<21;i++)
-			{
-				read_icstatus_data[i] = dut1.g_pattern_smbus_control_buf[i+10];
-			}
-			xil_printf("dut1.read_icstatus_data[11] =0x%x\r\n", read_icstatus_data[11]);
-			xil_printf("dut1.read_icstatus_data[12] =0x%x\r\n", read_icstatus_data[12]);
-
-			if((read_icstatus_data[11] == 0x57) && (read_icstatus_data[12] == 0x54))
-			{
-			    xil_printf("dut1 check IC information pass!\r\n\r\n");
-
-				for(i=1; i<60; i++)
-				{
-					dut1.g_pattern_smbus_control_buf[i] = CLEAR_;
-				}
-
-				dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-				dut1.g_pattern_step++;
-			}
-			else
-			{
-				xil_printf("dut1 check IC information fail!\r\n\r\n");
-
-				dut1.g_result_fail = 0x01;
-				dut1.g_result_fail_tmrcount = 0xffff;
-			}
-		}
-		break;
-	}
+//	//check IC information
+//	case 0x000b:
+//	{
+//		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_geticstatus;
+//		dut1.g_pattern_smbus_control_buf[2] = 0x00;
+//		dut1.g_pattern_smbus_control_buf[3] = 0x00;
+//		dut1.g_pattern_smbus_control_buf[4] = 0x14;
+//
+//		smbus1_irq_handle(dut1.g_pattern_smbus_control_buf);
+//		if(dut1.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
+//		{
+//			break;
+//		}
+//		else
+//		{
+//			for(i=0;i<21;i++)
+//			{
+//				read_icstatus_data[i] = dut1.g_pattern_smbus_control_buf[i+10];
+//			}
+//			xil_printf("dut1.read_icstatus_data[11] =0x%x\r\n", read_icstatus_data[11]);
+//			xil_printf("dut1.read_icstatus_data[12] =0x%x\r\n", read_icstatus_data[12]);
+//
+//			if((read_icstatus_data[11] == 0x57) && (read_icstatus_data[12] == 0x54))
+//			{
+//			    xil_printf("dut1 check IC information pass!\r\n\r\n");
+//
+//				for(i=1; i<60; i++)
+//				{
+//					dut1.g_pattern_smbus_control_buf[i] = CLEAR_;
+//				}
+//
+//				dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
+//				dut1.g_pattern_step++;
+//			}
+//			else
+//			{
+//				xil_printf("dut1 check IC information fail!\r\n\r\n");
+//
+//				dut1.g_result_fail = 0x01;
+//				dut1.g_result_fail_tmrcount = 0xffff;
+//			}
+//		}
+//		break;
+//	}
 
 	//check MCM flash ID
-	case 0x000b:
+	case 0x000c:
 	{
 		dut1.g_pattern_smbus_control_buf[1] = smbus_cmd_type_vdcmdenable;
 		dut1.g_pattern_smbus_control_buf[2] = 0x04;

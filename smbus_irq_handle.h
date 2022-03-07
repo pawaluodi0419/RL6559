@@ -35,7 +35,8 @@
 #define smbus_cmd_type_reset_to_flash	     0x05
 #define smbus_cmd_type_reset_to_rom		     0x02
 #define smbus_cmd_type_writeflash		     0x04
-#define smbus_cmd_type_readflash		     0x24
+#define smbus_cmd_type_readflash_64K		 0x24
+#define smbus_cmd_type_readflash_128K		 0x26
 #define smbus_cmd_type_eraseflash		     0x03
 
 #define SMBUS_DEV0_ADDR XPAR_AXI_IIC_DUT0_1_BASEADDR
