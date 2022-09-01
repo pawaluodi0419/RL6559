@@ -216,6 +216,7 @@ extern u8 g_ledD6Tg;
 extern u8 g_ledD7Tg;
 
 extern u32 g_main_count;
+extern u8 g_u2_host_test1_flag;
 
 extern struct DUT dut0;
 extern struct DUT dut1;

@@ -12,9 +12,6 @@ u8 _by_Pattern_PD_msg_dut1()
 	//DP obverse/U2 mux A: XGPIO22 -> L
 	case 0x0000:
 	{
-		i2c_mcp23008_output(AD7994_DEV1_ADDR, MCP23008_ADDR, 0x80);
-		msdelay(10);
-
 		if(dut1.g_dut_pattern_status_buf[7] == 0x00)
 		{
 			Buff_dut1_XGPIO_0[0] = 0x31;                            //REG0005 ouput value[7:0]
@@ -189,7 +186,7 @@ u8 _by_Pattern_PD_msg_dut1()
 				}
 
 				dut1.g_ack_bit_reread_timer = 20;
-				dut1.g_pattern_timer = 0xfff;
+				dut1.g_pattern_timer = 0x3fff;
 				dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut1.g_pattern_step = 0x00;
 				//dut1.g_dut_pattern_status_buf[2]++;

@@ -34,7 +34,7 @@ u8 _by_Pattern_U2_host_test1_dut1()
 			}
 
 			dut1.g_result_polling_tmrcount = 20;
-			dut1.g_pattern_timer = 0xfff;
+			dut1.g_pattern_timer = 0x3fff;
 			dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 			dut1.g_pattern_step = 0x00;
 			//dut1.g_dut_pattern_status_buf[2]++;

@@ -97,7 +97,7 @@ u8 _by_Pattern3_dut3()
 					dut3.g_pattern_smbus_control_buf[i] = CLEAR_;
 				}
 
-				dut3.g_pattern_timer = 0xfff;
+				dut3.g_pattern_timer = 0x3fff;
 				dut3.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut3.g_pattern_step = 0x00;
 				//dut3.g_dut_pattern_status_buf[2]++;

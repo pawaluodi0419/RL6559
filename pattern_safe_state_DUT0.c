@@ -68,7 +68,7 @@ void pattern_safe_state_dut0()
 	dut0.g_ccdet_step = 0;
 	dut0.g_ccdet_retest_signbit = 0;
 
-   	dut0.g_pattern_timer = 0xfff;
+   	dut0.g_pattern_timer = 0x3fff;
    	dut0.g_relay_control_timer = 0xff;
 	dut0.g_smbus_timer = 0xff;
 

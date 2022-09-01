@@ -32,10 +32,11 @@ u8 g_ledD4Tg=0;
 u8 g_ledD5Tg=0;
 u8 g_ledD6Tg=0;
 u8 g_ledD7Tg=0;
+u8 g_u2_host_test1_flag = 0;
 
 int main()
 {
-	xil_printf("FT2 start!\r\nFPGA Version:RTS5443H_FT_Merge_Release_2022030301\r\n");
+	xil_printf("FT2 start!\r\nFPGA Version:RTS5443H_FT_Merge_TTR_2022090101\r\n");
 
 	XGpio_WriteBit(XPAR_AXI_GPIO_1_BASEADDR,0,1, 0);	//reset usb host
 	msdelay(100);
@@ -109,7 +110,7 @@ int main()
     TmrIntvlLoad(XPAR_AXI_TIMER_0_BASEADDR,0,10000);
     XTmrCtr_Enable(XPAR_AXI_TIMER_0_BASEADDR, 0);
 
-    TmrIntvlLoad(XPAR_AXI_TIMER_1_BASEADDR,0,10000);
+    TmrIntvlLoad(XPAR_AXI_TIMER_1_BASEADDR,0,100000);
     XTmrCtr_Enable(XPAR_AXI_TIMER_1_BASEADDR, 0);
 
     TmrIntvlLoad(XPAR_AXI_TIMER_2_BASEADDR,0,700);
@@ -164,10 +165,10 @@ int main()
   		dut3.g_dut_pattern_status_buf[i] = 0x00;
   	}
 
-  	dut0.g_pattern_timer = 0xff;
-  	dut1.g_pattern_timer = 0xff;
-  	dut2.g_pattern_timer = 0xff;
-  	dut3.g_pattern_timer = 0xff;
+  	dut0.g_pattern_timer = 0x3fff;
+  	dut1.g_pattern_timer = 0x3fff;
+  	dut2.g_pattern_timer = 0x3fff;
+  	dut3.g_pattern_timer = 0x3fff;
 
 	dut0.g_relay_control_timer = 0xff;
 	dut1.g_relay_control_timer = 0xff;
@@ -219,10 +220,10 @@ int main()
 	dut2.g_ack_bit_reread_timer = 20;
 	dut3.g_ack_bit_reread_timer = 20;
 
-	dut0.g_result_polling_tmrcount = 20;
-	dut1.g_result_polling_tmrcount = 20;
-	dut2.g_result_polling_tmrcount = 20;
-	dut3.g_result_polling_tmrcount = 20;
+	dut0.g_result_polling_tmrcount = 50;
+	dut1.g_result_polling_tmrcount = 50;
+	dut2.g_result_polling_tmrcount = 50;
+	dut3.g_result_polling_tmrcount = 50;
 
 	dut0.g_start_test_flag1 = 0x00;
 	dut1.g_start_test_flag1 = 0x00;
@@ -385,7 +386,11 @@ int main()
 				}
 				case 0x0E:
 				{
-					_by_Pattern_U2_host_test1_dut0();
+//					_by_Pattern_U2_host_test1_dut0();
+					if(g_u2_host_test1_flag)
+					{
+						dut0.g_uartPatternNum++;
+					}
 					break;
 				}
 				case 0x0F:
@@ -516,7 +521,11 @@ int main()
 				}
 				case 0x0E:
 				{
-					_by_Pattern_U2_host_test1_dut1();
+//					_by_Pattern_U2_host_test1_dut1();
+					if(g_u2_host_test1_flag)
+					{
+						dut1.g_uartPatternNum++;
+					}
 					break;
 				}
 				case 0x0F:
@@ -647,7 +656,11 @@ int main()
 				}
 				case 0x0E:
 				{
-					_by_Pattern_U2_host_test1_dut2();
+//					_by_Pattern_U2_host_test1_dut2();
+					if(g_u2_host_test1_flag)
+					{
+						dut2.g_uartPatternNum++;
+					}
 					break;
 				}
 				case 0x0F:
@@ -778,7 +791,11 @@ int main()
 				}
 				case 0x0E:
 				{
-					_by_Pattern_U2_host_test1_dut3();
+//					_by_Pattern_U2_host_test1_dut3();
+					if(g_u2_host_test1_flag)
+					{
+						dut3.g_uartPatternNum++;
+					}
 					break;
 				}
 				case 0x0F:
@@ -827,10 +844,10 @@ int main()
 			dut2.g_start_test_flag1 = 0x00;
 			dut3.g_start_test_flag1 = 0x00;
 
-			dut0.g_result_polling_tmrcount = 20;
-			dut1.g_result_polling_tmrcount = 20;
-			dut2.g_result_polling_tmrcount = 20;
-			dut3.g_result_polling_tmrcount = 20;
+			dut0.g_result_polling_tmrcount = 50;
+			dut1.g_result_polling_tmrcount = 50;
+			dut2.g_result_polling_tmrcount = 50;
+			dut3.g_result_polling_tmrcount = 50;
 
 			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, FIRST_TEST);
 			msdelay(5);
@@ -847,10 +864,10 @@ int main()
 			dut2.g_start_test_flag2 = 0x00;
 			dut3.g_start_test_flag2 = 0x00;
 
-//			dut0.g_result_polling_tmrcount = 20;
-//			dut1.g_result_polling_tmrcount = 20;
-//			dut2.g_result_polling_tmrcount = 20;
-//			dut3.g_result_polling_tmrcount = 20;
+//			dut0.g_result_polling_tmrcount = 50;
+//			dut1.g_result_polling_tmrcount = 50;
+//			dut2.g_result_polling_tmrcount = 50;
+//			dut3.g_result_polling_tmrcount = 50;
 
 			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, SECOND_TEST);
 			msdelay(5);

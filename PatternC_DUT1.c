@@ -59,7 +59,7 @@ u8 _by_PatternC_dut1()
 					dut1.g_pattern_smbus_control_buf[i] = CLEAR_;
 				}
 
-				dut1.g_pattern_timer = 0xfff;
+				dut1.g_pattern_timer = 0x3fff;
 				dut1.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut1.g_pattern_step = 0x00;
 				//dut1.g_dut_pattern_status_buf[2]++;
@@ -67,6 +67,7 @@ u8 _by_PatternC_dut1()
 				dut1.g_uartPatternNum = 0x0e;
 				result_output_for_v50(XPAR_AXI_GPIO_dut1_1_BASEADDR,dut1.g_uartPatternNum);
 				xil_printf("dut1.patternC_pass!\r\n\r\n");
+				dut1.g_start_test_flag1 = 0x01;
 			}
 			else
 			{

@@ -131,7 +131,7 @@ u8 _by_PatternE_dut0()
 					dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
 				}
 
-				dut0.g_pattern_timer = 0xfff;
+				dut0.g_pattern_timer = 0x3fff;
 				dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut0.g_pattern_step = 0x00;
 				//dut0.g_dut_pattern_status_buf[2]++;
@@ -184,7 +184,7 @@ u8 _by_PatternE_dut0()
 //				dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
 //			}
 //
-//			dut0.g_pattern_timer = 0xfff;
+//			dut0.g_pattern_timer = 0x3fff;
 //			dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 //			dut0.g_pattern_step = 0x00;
 //			//dut0.g_dut_pattern_status_buf[2]++;

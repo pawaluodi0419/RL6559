@@ -98,7 +98,7 @@ u8 _by_Pattern2_dut2()
 				}
 
 				//dut2.g_ack_bit_reread_timer = 10;
-				dut2.g_pattern_timer = 0xfff;
+				dut2.g_pattern_timer = 0x3fff;
 				dut2.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut2.g_pattern_step = 0x00;
 				//dut2.g_dut_pattern_status_buf[2]++;

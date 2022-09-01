@@ -38,7 +38,7 @@ u8 _by_Pattern0_Setup_dut2()
 				dut2.g_pattern_step++;
 
 				//XGpio_2_WriteBit(0,dut2_FT2_PWR_CTRL_OFFSET,0x00);	//S0_PWR_EN# output low, power on DUT
-				i2c_mcp23008_output(AD7994_DEV2_ADDR, MCP23008_ADDR, 0x80);
+				i2c_mcp23008_output(AD7994_DEV2_ADDR, MCP23008_ADDR, 0xc0);
 				xil_printf("dut2 power on!\r\n\r\n");
 				msdelay(200);
 			}
@@ -322,7 +322,7 @@ u8 _by_Pattern0_Setup_dut2()
 			{
 				i2c_mcp23008_output(AD7994_DEV2_ADDR, MCP23008_ADDR, 0x00);
 				msdelay(50);
-				i2c_mcp23008_output(AD7994_DEV2_ADDR, MCP23008_ADDR, 0x80);
+				i2c_mcp23008_output(AD7994_DEV2_ADDR, MCP23008_ADDR, 0xc0);
 				msdelay(200);
 				xil_printf("dut2 check FT mode again!\r\n\r\n");
 				dut2.g_pattern_step = 0x09;
@@ -476,7 +476,7 @@ u8 _by_Pattern0_Setup_dut2()
 					dut2.g_pattern_smbus_control_buf[i] = CLEAR_;
 				}
 
-				dut2.g_pattern_timer = 0xfff;
+				dut2.g_pattern_timer = 0x3fff;
 				dut2.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 				dut2.g_pattern_step = 0x00;
 				//dut2.g_dut_pattern_status_buf[2]++;
