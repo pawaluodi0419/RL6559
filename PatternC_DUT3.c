@@ -64,7 +64,7 @@ u8 _by_PatternC_dut3()
 				dut3.g_pattern_step = 0x00;
 				//dut3.g_dut_pattern_status_buf[2]++;
 				dut3.g_uartPatternEnable = 0x00;
-				dut3.g_uartPatternNum = 0x0e;
+				dut3.g_uartPatternNum = 0x20;
 				result_output_for_v50(XPAR_AXI_GPIO_dut3_1_BASEADDR,dut3.g_uartPatternNum);
 				xil_printf("dut3.patternC_pass!\r\n\r\n");
 				dut3.g_start_test_flag1 = 0x01;

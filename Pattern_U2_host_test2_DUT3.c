@@ -9,6 +9,7 @@ u8 _by_Pattern_U2_host_test2_dut3()
 	case 0x0000:
 	{
 		dut3.g_start_test_flag2 = 0x02;
+		dut3.g_result_polling_tmrcount = 20;
 
 		i2c_get_result_dut3(AD7994_DEV0_ADDR, USB_HOST_ADDR);
 		msdelay(5);
@@ -33,7 +34,6 @@ u8 _by_Pattern_U2_host_test2_dut3()
 				dut3.g_pattern_smbus_control_buf[i] = CLEAR_;
 			}
 
-			dut3.g_result_polling_tmrcount = 50;
 			dut3.g_pattern_timer = 0x3fff;
 			dut3.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
 			dut3.g_pattern_step = 0x00;

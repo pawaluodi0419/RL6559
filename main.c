@@ -36,7 +36,7 @@ u8 g_u2_host_test1_flag = 0;
 
 int main()
 {
-	xil_printf("FT2 start!\r\nFPGA Version:RTS5443H_FT_Merge_TTR_2022090101\r\n");
+	xil_printf("FT2 start!\r\nFPGA Version:RTS5443H_FT_Merge_TTR_2022090501\r\n");
 
 	XGpio_WriteBit(XPAR_AXI_GPIO_1_BASEADDR,0,1, 0);	//reset usb host
 	msdelay(100);
@@ -220,10 +220,10 @@ int main()
 	dut2.g_ack_bit_reread_timer = 20;
 	dut3.g_ack_bit_reread_timer = 20;
 
-	dut0.g_result_polling_tmrcount = 50;
-	dut1.g_result_polling_tmrcount = 50;
-	dut2.g_result_polling_tmrcount = 50;
-	dut3.g_result_polling_tmrcount = 50;
+	dut0.g_result_polling_tmrcount = 20;
+	dut1.g_result_polling_tmrcount = 20;
+	dut2.g_result_polling_tmrcount = 20;
+	dut3.g_result_polling_tmrcount = 20;
 
 	dut0.g_start_test_flag1 = 0x00;
 	dut1.g_start_test_flag1 = 0x00;
@@ -844,11 +844,6 @@ int main()
 			dut2.g_start_test_flag1 = 0x00;
 			dut3.g_start_test_flag1 = 0x00;
 
-			dut0.g_result_polling_tmrcount = 50;
-			dut1.g_result_polling_tmrcount = 50;
-			dut2.g_result_polling_tmrcount = 50;
-			dut3.g_result_polling_tmrcount = 50;
-
 			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, FIRST_TEST);
 			msdelay(5);
 			//Resolve the problem: data out of sync
@@ -864,11 +859,6 @@ int main()
 			dut2.g_start_test_flag2 = 0x00;
 			dut3.g_start_test_flag2 = 0x00;
 
-//			dut0.g_result_polling_tmrcount = 50;
-//			dut1.g_result_polling_tmrcount = 50;
-//			dut2.g_result_polling_tmrcount = 50;
-//			dut3.g_result_polling_tmrcount = 50;
-
 			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, SECOND_TEST);
 			msdelay(5);
 			//Resolve the problem: data out of sync
@@ -880,8 +870,13 @@ int main()
 		if((dut0.g_ft2_test_done == 0x00) && (dut1.g_ft2_test_done == 0x00) && (dut2.g_ft2_test_done == 0x00) && (dut3.g_ft2_test_done == 0x00))
 		{
 			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, FINISH_TEST);
+			msdelay(5);
+			//Resolve the problem: data out of sync
+			i2c_send_vendorcmd(AD7994_DEV0_ADDR, USB_HOST_ADDR, 0x05);
 			msdelay(2000);
-			//xil_printf("without start signal or ft2 test done, send uart data 0x03!\r\n\r\n");
+			xil_printf("without start signal or ft2 test done, send uart data 0x03!\r\n\r\n");
+
+			XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 1);
 		}
    }
    return 0;
