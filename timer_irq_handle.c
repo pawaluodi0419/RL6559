@@ -117,8 +117,10 @@ void axi_tmr2_intrq_handle()
 		////////////////pattern_timer/////////////
 		if(dut0.g_pattern_timer == 0)
 		{
+			xil_printf("dut0 no response, dut0.g_uartPatternNum =%x\r\n\r\n", dut0.g_uartPatternNum);
+
 			pattern_safe_state_dut0();
-			xil_printf("fpga no response, please check environment!\r\n\r\n");
+			dut0.g_result_fail = 0x01;
 		}
 		else
 		{
@@ -177,8 +179,10 @@ void axi_tmr2_intrq_handle()
 		////////////////pattern_timer/////////////
 		if(dut1.g_pattern_timer == 0)
 		{
+			xil_printf("dut1 no response, dut1.g_uartPatternNum =%x\r\n\r\n", dut1.g_uartPatternNum);
+
 			pattern_safe_state_dut1();
-			xil_printf("fpga no response, please check environment!\r\n\r\n");
+			dut1.g_result_fail = 0x01;
 		}
 		else
 		{
@@ -236,8 +240,10 @@ void axi_tmr2_intrq_handle()
 		////////////////pattern_timer/////////////
 		if(dut2.g_pattern_timer == 0)
 		{
+			xil_printf("dut2 no response, dut2.g_uartPatternNum =%x\r\n\r\n", dut2.g_uartPatternNum);
+
 			pattern_safe_state_dut2();
-			xil_printf("fpga no response, please check environment!\r\n\r\n");
+			dut2.g_result_fail = 0x01;
 		}
 		else
 		{
@@ -295,8 +301,10 @@ void axi_tmr2_intrq_handle()
 		////////////////pattern_timer/////////////
 		if(dut3.g_pattern_timer == 0)
 		{
+			xil_printf("dut3 no response, dut3.g_uartPatternNum =%x\r\n\r\n", dut3.g_uartPatternNum);
+
 			pattern_safe_state_dut3();
-			xil_printf("fpga no response, please check environment!\r\n\r\n");
+			dut3.g_result_fail = 0x01;
 		}
 		else
 		{

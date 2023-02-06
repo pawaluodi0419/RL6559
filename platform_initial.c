@@ -56,7 +56,7 @@ void platform_initial()
 		dut0.g_result_fail = 0x00;
 		dut0.g_result_output_ch = 0;
 		dut0.g_uartPatternEnable = 0x01;
-		dut0.g_uartPatternNum = 0x18;
+		dut0.g_uartPatternNum = 0x00;
 		dut0.g_dut_start_ready = 1;
 		dut0.g_ft2_test_done = 0x01;
 		//xil_printf("dut0.platform_initial_print_finish!\r\n");
@@ -72,7 +72,7 @@ void platform_initial()
 		dut1.g_result_fail = 0x00;
 		dut1.g_result_output_ch = 0;
 		dut1.g_uartPatternEnable = 0x01;
-		dut1.g_uartPatternNum = 0x18;
+		dut1.g_uartPatternNum = 0x00;
 		dut1.g_dut_start_ready = 1;
 		dut1.g_ft2_test_done = 0x01;
 		//xil_printf("dut1.platform_initial_print_finish!\r\n");
@@ -88,7 +88,7 @@ void platform_initial()
 		dut2.g_result_fail = 0x00;
 		dut2.g_result_output_ch = 0;
 		dut2.g_uartPatternEnable = 0x01;
-		dut2.g_uartPatternNum = 0x18;
+		dut2.g_uartPatternNum = 0x00;
 		dut2.g_dut_start_ready = 1;
 		dut2.g_ft2_test_done = 0x01;
 		//xil_printf("dut2.platform_initial_print_finish!\r\n");
@@ -104,7 +104,7 @@ void platform_initial()
 		dut3.g_result_fail = 0x00;
 		dut3.g_result_output_ch = 0;
 		dut3.g_uartPatternEnable = 0x01;
-		dut3.g_uartPatternNum = 0x18;
+		dut3.g_uartPatternNum = 0x00;
 		dut3.g_dut_start_ready = 1;
 		dut3.g_ft2_test_done = 0x01;
 		//xil_printf("dut3.platform_initial_print_finish!\r\n");

@@ -75,9 +75,9 @@ void XGPIO_dut3_1_Intrq_Handle()
 	{
 		if(dut3.g_result_fail != 0x00)
 		{
-			xil_printf("dut3 fail time enough, start next test!\r\n");
-			dut3.g_uartPatternNum = 0x18;
+			xil_printf("dut3 ft2 pattern fail, start next test!\r\n\r\n");
 
+			dut3.g_uartPatternNum = 0x18;
 			dut3.g_dut_start_ready = 0x11;
 			dut3.g_result_fail = 0x00;
 		}

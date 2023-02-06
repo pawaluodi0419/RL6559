@@ -9,16 +9,14 @@ u8 _by_Pattern0_Setup_dut0()
 
 	switch(dut0.g_pattern_step)
 	{
-	//normal mode：VMON非满偏(XGPIO13 -> L, XGPIO14 -> H), GPIO10为low(XGPIO23 -> L)
-	//power rail: S0_5V_SW(XGPIO8 -> L)
-	//DP reverse/U2 mux B: XGPIO22 -> H
+	//FT mode：VMON满偏(XGPIO13 -> H, XGPIO14 -> L), GPIO10为low(XGPIO23 -> L)
 	case 0x0000:
 	{
 		if(dut0.g_dut_pattern_status_buf[7] == 0x00)
 		{
 			Buff_dut0_XGPIO_0[0] = 0x00;                          	//REG0005 ouput value[7:0]
 			Buff_dut0_XGPIO_0[1] = 0xFF;							//REG0006
-			Buff_dut0_XGPIO_0[2] = 0x40;							//REG0007 output value[15:8]
+			Buff_dut0_XGPIO_0[2] = 0x20;							//REG0007 output value[15:8]
 			Buff_dut0_XGPIO_0[3] = 0xDE;							//REG0008
 			Buff_dut0_XGPIO_0[4] = 0x40|(dut0.g_uartPatternNum); 	//REG0009 output value[23:16]
 			Buff_dut0_XGPIO_0[5] = 0x00;							//REG000a
@@ -27,7 +25,7 @@ u8 _by_Pattern0_Setup_dut0()
 
 			XGpio_dut0_Relay_WriteByte(XPAR_AXI_GPIO_dut0_1_BASEADDR,Buff_dut0_XGPIO_0);
 			dut0.g_dut_pattern_status_buf[7] = 0x01;
-			//xil_printf("dut0.pattern0_gpio_control_completed!\r\n");
+			xil_printf("dut0.pattern0_ft_mode_control_completed!\r\n");
 			msdelay(10);
 		}
 		else if(dut0.g_dut_pattern_status_buf[7] == 0x01)
@@ -77,227 +75,8 @@ u8 _by_Pattern0_Setup_dut0()
 		break;
 	}
 
-	//check crc32
-	case 0x0002:
-	{
-		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readmem;
-		dut0.g_pattern_smbus_control_buf[2] = 0x07;
-		dut0.g_pattern_smbus_control_buf[3] = 0xdf;
-		dut0.g_pattern_smbus_control_buf[4] = 0x01;
-
-		smbus0_irq_handle(dut0.g_pattern_smbus_control_buf);
-		if(dut0.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			xil_printf("dut0 read 0xdf07 =%x\r\n", dut0.g_pattern_smbus_control_buf[10]);
-
-			if(dut0.g_pattern_smbus_control_buf[10] == 0x40)
-			{
-				xil_printf("dut0.pattern_check_crc32_pass!\r\n\r\n");
-				dut0.g_pattern_step++;
-			}
-			else
-			{
-				xil_printf("dut0.pattern_check_crc32_fail!\r\n\r\n");
-
-				dut0.g_result_fail = 0x01;
-				dut0.g_result_fail_tmrcount = 0xffff;
-			}
-
-			for(i=1; i<60; i++)
-			{
-				dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
-			}
-			dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-		}
-		break;
-	}
-
-	//check FW version
-	case 0x0003:
-	{
-		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_geticstatus;
-		dut0.g_pattern_smbus_control_buf[2] = 0x00;
-		dut0.g_pattern_smbus_control_buf[3] = 0x00;
-		dut0.g_pattern_smbus_control_buf[4] = 0x14;
-
-		smbus0_irq_handle(dut0.g_pattern_smbus_control_buf);
-		if(dut0.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			for(i=0;i<21;i++)
-			{
-				read_icstatus_data[i] = dut0.g_pattern_smbus_control_buf[i+10];
-			}
-			xil_printf("dut0.read_icstatus_data[3] =0x%02x\r\n", read_icstatus_data[3]);
-			xil_printf("dut0.read_icstatus_data[4] =0x%02x\r\n", read_icstatus_data[4]);
-
-			if((read_icstatus_data[3] == 0x01) && (read_icstatus_data[4] == 0x02))
-			{
-			    xil_printf("dut0 check FW version pass!\r\n\r\n");
-
-				for(i=1; i<60; i++)
-				{
-					dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
-				}
-
-				dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-				dut0.g_pattern_step++;
-			}
-			else
-			{
-				xil_printf("dut0 check FW version fail!\r\n\r\n");
-
-				dut0.g_result_fail = 0x01;
-				dut0.g_result_fail_tmrcount = 0xffff;
-			}
-		}
-		break;
-	}
-
-	//check crc32 data
-	case 0x0004:
-	{
-		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readflash_128K;
-		dut0.g_pattern_smbus_control_buf[2] = 0xe6;
-		dut0.g_pattern_smbus_control_buf[3] = 0xff;
-		dut0.g_pattern_smbus_control_buf[4] = 0x04;
-
-		smbus0_irq_handle(dut0.g_pattern_smbus_control_buf);
-		if(dut0.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			for(i=0;i<4;i++)
-			{
-				read_flashdata[i] = dut0.g_pattern_smbus_control_buf[i+10];
-			}
-			xil_printf("dut0.crc32_byte0 =0x%02x\r\n", read_flashdata[0]);
-			xil_printf("dut0.crc32_byte1 =0x%02x\r\n", read_flashdata[1]);
-			xil_printf("dut0.crc32_byte2 =0x%02x\r\n", read_flashdata[2]);
-			xil_printf("dut0.crc32_byte3 =0x%02x\r\n", read_flashdata[3]);
-
-			if((read_flashdata[0] == 0x3f) && (read_flashdata[1] == 0x93) && (read_flashdata[2] == 0xd0) && (read_flashdata[3] == 0xf2))
-			{
-			    xil_printf("dut0 check crc32 data pass!\r\n\r\n");
-
-				for(i=1; i<60; i++)
-				{
-					dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
-				}
-
-				dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-				dut0.g_pattern_step++;
-			}
-			else
-			{
-				xil_printf("dut0 check crc32 data fail!\r\n\r\n");
-
-				dut0.g_result_fail = 0x01;
-				dut0.g_result_fail_tmrcount = 0xffff;
-			}
-		}
-		break;
-	}
-
-	//FT mode：VMON满偏(XGPIO13 -> H, XGPIO14 -> L), GPIO10为low(XGPIO23 -> L)
-	case 0x0005:
-	{
-		if(dut0.g_dut_pattern_status_buf[7] == 0x00)
-		{
-			Buff_dut0_XGPIO_0[0] = 0x00;                          	//REG0005 ouput value[7:0]
-			Buff_dut0_XGPIO_0[1] = 0xFF;							//REG0006
-			Buff_dut0_XGPIO_0[2] = 0x20;							//REG0007 output value[15:8]
-			Buff_dut0_XGPIO_0[3] = 0xDE;							//REG0008
-			Buff_dut0_XGPIO_0[4] = 0x40|(dut0.g_uartPatternNum); 	//REG0009 output value[23:16]
-			Buff_dut0_XGPIO_0[5] = 0x00;							//REG000a
-			Buff_dut0_XGPIO_0[6] = 0x00;							//REG000b output value[31:24]
-			Buff_dut0_XGPIO_0[7] = 0xFF;							//REG000c
-
-			XGpio_dut0_Relay_WriteByte(XPAR_AXI_GPIO_dut0_1_BASEADDR,Buff_dut0_XGPIO_0);
-			dut0.g_dut_pattern_status_buf[7] = 0x01;
-			xil_printf("dut0.pattern0_ft_mode_control_completed!\r\n");
-			msdelay(10);
-		}
-		else if(dut0.g_dut_pattern_status_buf[7] == 0x01)
-		{
-			if(dut0.g_relay_control_timer == 0 )
-			{
-				dut0.g_dut_pattern_status_buf[7] = 0x00;
-				dut0.g_pattern_step++;
-			}
-		}
-		//output fail result
-		else
-		{
-			dut0.g_result_fail = 0x01;
-			dut0.g_result_fail_tmrcount = 0xffff;
-		}
-		break;
-	}
-
-	//reset to flash
-	case 0x0006:
-	{
-		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_reset_to_flash;
-		dut0.g_pattern_smbus_control_buf[2] = 0xda;
-		dut0.g_pattern_smbus_control_buf[3] = 0x0b;
-		dut0.g_pattern_smbus_control_buf[4] = 0x01;
-
-		smbus0_irq_handle(dut0.g_pattern_smbus_control_buf);
-		if(dut0.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			for(i=1; i<31; i++)
-			{
-				dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
-			}
-
-			dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-			dut0.g_pattern_step++;
-			msdelay(200);
-		}
-		break;
-	}
-
-	case 0x0007:
-	{
-		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_vdcmdenable;
-		dut0.g_pattern_smbus_control_buf[2] = 0xda;
-		dut0.g_pattern_smbus_control_buf[3] = 0x0b;
-		dut0.g_pattern_smbus_control_buf[4] = 0x01;
-
-		smbus0_irq_handle(dut0.g_pattern_smbus_control_buf);
-		if(dut0.g_pattern_smbus_control_buf[0] != smbus_road_done_pass)
-		{
-			break;
-		}
-		else
-		{
-			for(i=1; i<60; i++)
-			{
-				dut0.g_pattern_smbus_control_buf[i] = CLEAR_;
-			}
-
-			dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-			dut0.g_pattern_step++;
-		}
-		break;
-	}
-
 	//check FT mode
-	case 0x0008:
+	case 0x0002:
 	{
 		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readmem;
 		dut0.g_pattern_smbus_control_buf[2] = 0x07;
@@ -316,7 +95,7 @@ u8 _by_Pattern0_Setup_dut0()
 			if(dut0.g_pattern_smbus_control_buf[10] == 0x20)
 			{
 				xil_printf("dut0 check FT mode pass!\r\n\r\n");
-				dut0.g_pattern_step = 0x0a;
+				dut0.g_pattern_step = 0x04;
 			}
 			else
 			{
@@ -325,7 +104,7 @@ u8 _by_Pattern0_Setup_dut0()
 				i2c_mcp23008_output(AD7994_DEV0_ADDR, MCP23008_ADDR, 0xc0);
 				msdelay(200);
 				xil_printf("dut0 check FT mode again!\r\n\r\n");
-				dut0.g_pattern_step = 0x09;
+				dut0.g_pattern_step = 0x03;
 			}
 
 			for(i=1; i<60; i++)
@@ -338,7 +117,7 @@ u8 _by_Pattern0_Setup_dut0()
 	}
 
 	//check FT mode retry
-	case 0x0009:
+	case 0x0003:
 	{
 		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_readmem;
 		dut0.g_pattern_smbus_control_buf[2] = 0x07;
@@ -377,7 +156,7 @@ u8 _by_Pattern0_Setup_dut0()
 	}
 
 	//disconnect aux mux switch
-	case 0x000a:
+	case 0x0004:
 	{
 		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_writemem;
 		dut0.g_pattern_smbus_control_buf[2] = 0x15;
@@ -398,7 +177,6 @@ u8 _by_Pattern0_Setup_dut0()
 			}
 
 			dut0.g_pattern_smbus_control_buf[0] = smbus_road_waiting;
-			dut0.g_pattern_step++;
 			dut0.g_pattern_step++;
 		}
 		break;
@@ -450,7 +228,7 @@ u8 _by_Pattern0_Setup_dut0()
 //	}
 
 	//check MCM flash ID
-	case 0x000c:
+	case 0x0005:
 	{
 		dut0.g_pattern_smbus_control_buf[1] = smbus_cmd_type_vdcmdenable;
 		dut0.g_pattern_smbus_control_buf[2] = 0x04;
