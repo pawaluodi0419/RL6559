@@ -51,7 +51,7 @@ void platform_initial()
 	if(dut0.g_dut_start_ready == 0x11)
 	{
 		pattern_safe_state_dut0();
-		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
+//		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
 
 		dut0.g_result_fail = 0x00;
 		dut0.g_result_output_ch = 0;
@@ -67,7 +67,7 @@ void platform_initial()
 	if(dut1.g_dut_start_ready == 0x11)
 	{
 		pattern_safe_state_dut1();
-		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
+//		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
 
 		dut1.g_result_fail = 0x00;
 		dut1.g_result_output_ch = 0;
@@ -83,7 +83,7 @@ void platform_initial()
 	if(dut2.g_dut_start_ready == 0x11)
 	{
 		pattern_safe_state_dut2();
-		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
+//		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
 
 		dut2.g_result_fail = 0x00;
 		dut2.g_result_output_ch = 0;
@@ -99,7 +99,7 @@ void platform_initial()
 	if(dut3.g_dut_start_ready == 0x11)
 	{
 		pattern_safe_state_dut3();
-		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
+//		XGpio_WriteBit(XPAR_AXI_GPIO_dut3_1_BASEADDR, 0, 1, 0);
 
 		dut3.g_result_fail = 0x00;
 		dut3.g_result_output_ch = 0;
